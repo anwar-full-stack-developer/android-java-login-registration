@@ -29,7 +29,6 @@ public class AuthenticationService extends Service {
 
     private static final String KEY_TOKEN = "key_token";
 
-
     private DataStore<Preferences> dataStore;
     private Context context;
     public AuthenticationService() {

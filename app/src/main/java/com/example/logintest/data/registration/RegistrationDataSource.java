@@ -1,9 +1,9 @@
-package com.example.logintest.data;
+package com.example.logintest.data.registration;
 
 import android.util.Log;
 
 import com.example.logintest.AppConfig;
-import com.example.logintest.data.model.LoggedInUser;
+import com.example.logintest.data.model.RegisterUser;
 import com.ok2c.hc.android.http.AndroidHttpClientConnectionManagerBuilder;
 
 import org.apache.http.Header;
@@ -30,10 +30,10 @@ import java.util.concurrent.TimeUnit;
 /**
  * Class that handles authentication w/ login credentials and retrieves user information.
  */
-public class LoginDataSource {
+public class RegistrationDataSource {
 
 
-    public LoginDataSourceResult<LoggedInUser> login(String username, String password) {
+    public RegistrationResponse<RegisterUser> register(String username, String password, String email, String firstName) {
 
 
         CloseableHttpClient httpClient = null;
@@ -60,7 +60,7 @@ public class LoginDataSource {
                 .build();
 
         // replace with your url
-        HttpPost httpPost = new HttpPost(AppConfig.API_BASE_URL + "/account/login");
+        HttpPost httpPost = new HttpPost(AppConfig.API_BASE_URL + "/account/register");
         //            httpPost.setHeader("Authorization", "Basic (with a username and password)");
         httpPost.setHeader("Content-type", "application/json");
 
@@ -68,6 +68,8 @@ public class LoginDataSource {
         Map<String, String> requestPayloadMap = new HashMap<>();
         requestPayloadMap.put("username", username);
         requestPayloadMap.put("password", password);
+        requestPayloadMap.put("firstName", firstName);
+        requestPayloadMap.put("email", email);
         JSONObject requestPayload = new JSONObject(requestPayloadMap);
         String requestBody = requestPayload.toString();
 
@@ -86,7 +88,7 @@ public class LoginDataSource {
             try {
                 HttpResponse response = httpClient.execute(httpPost);
                 // write response to log/ response header
-                Log.d("HttpPostResponseLogin:", response.toString());
+                Log.d("HttpPostResponseRegistration:", response.toString());
 
                 // Get the response status code
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -103,37 +105,39 @@ public class LoginDataSource {
                 Log.d("PostJsonResponse", responseBody);
                 JSONObject ro = new JSONObject(responseBody);
                 System.out.println("ResponseObject: username: " + ro.getString("username"));
-                // TODO: handle loggedInUser authentication
-                LoggedInUser realUser =
-                        new LoggedInUser(
+                // TODO: handle save newuser
+                RegisterUser realUser =
+                        new RegisterUser(
                                 ro.getString("id"),
+                                ro.getString("firstName"),
+                                ro.getString("email"),
                                 ro.getString("username"),
-                                ro.getString("id"));
-                return new LoginDataSourceResult.Success<>(realUser);
+                                ro.getString("password"));
+                return new RegistrationResponse.Success<>(realUser);
             } catch (ClientProtocolException e) {
                 // Log exception
 //                e.printStackTrace();
-                return new LoginDataSourceResult.Error(new IOException("Error logging in", e));
+                return new RegistrationResponse.Error(new IOException("Error logging in", e));
             } catch (IOException e) {
                 // Log exception
 //                e.printStackTrace();
-                return new LoginDataSourceResult.Error(new IOException("Error logging in", e));
+                return new RegistrationResponse.Error(new IOException("Error logging in", e));
             }catch (Exception e) {
-                return new LoginDataSourceResult.Error(new IOException("Error logging in", e));
+                return new RegistrationResponse.Error(new IOException("Error logging in", e));
 //                e.printStackTrace();
             } finally {
                 // Close the HttpClient instance
 //            httpClient.getConnectionManager().shutdown();
                 connectionManager.shutdown();
             }
-//            // TODO: handle loggedInUser authentication
-//            LoggedInUser fakeUser =
-//                    new LoggedInUser(
+//            // TODO: handle RegisterUser
+//            RegisterUser fakeUser =
+//                    new RegisterUser(
 //                            java.util.UUID.randomUUID().toString(),
 //                            "Jane Doe");
-//            return new LoginResult.Success<>(fakeUser);
+//            return new RegistrationResponse.Success<>(fakeUser);
         } catch (Exception e) {
-            return new LoginDataSourceResult.Error(new IOException("Error logging in", e));
+            return new RegistrationResponse.Error(new IOException("Error logging in", e));
         }
 //        return null;
     }

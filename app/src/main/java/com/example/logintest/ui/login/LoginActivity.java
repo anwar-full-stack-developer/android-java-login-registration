@@ -30,6 +30,7 @@ import com.example.logintest.data.AppMainSharedRepository;
 import com.example.logintest.ui.login.LoginViewModel;
 import com.example.logintest.ui.login.LoginViewModelFactory;
 import com.example.logintest.databinding.ActivityLoginBinding;
+import com.example.logintest.ui.registration.RegistrationActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -141,11 +142,11 @@ public class LoginActivity extends AppCompatActivity {
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Log.d("LoginActivity", "SignUp Button Clicked");
-//                Intent intent = new Intent(v.getContext(), SignupActivity.class);
-//                //pass parameter
-//                intent.putExtra("dispatchFrom", "LoginActivity_to_SignupActivity");
-//                v.getContext().startActivity(intent);
+                Log.d("LoginActivity", "SignUp Button Clicked");
+                Intent intent = new Intent(v.getContext(), RegistrationActivity.class);
+                //pass parameter
+                intent.putExtra("dispatchFrom", "LoginActivity_to_RegistrationActivity");
+                v.getContext().startActivity(intent);
 
             }
         });

@@ -12,11 +12,11 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.logintest.R;
 import com.example.logintest.data.AppMainSharedRepository;
 import com.example.logintest.data.model.LoggedInUser;
 import com.example.logintest.databinding.ActivityMainBinding;
 import com.example.logintest.ui.login.LoginActivity;
+import com.example.logintest.ui.registration.RegistrationActivity;
 import com.ok2c.hc.android.http.AndroidHttpClientConnectionManagerBuilder;
 
 import org.apache.http.Header;
@@ -35,9 +35,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -116,108 +114,23 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final Button btnNavToPostReq = binding.btnNavToPostReq;
-        btnNavToPostReq.setOnClickListener(new View.OnClickListener() {
+        final Button btnReg = binding.btnNavToRegistration;
+        btnReg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d("MainActivity", "btnNavToPostReq called");
-                makePostRequest();
-                Toast.makeText(getApplicationContext(), "Post Request Clicked", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),
+                        "Registration button Clicked", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(v.getContext(), RegistrationActivity.class);
+                //pass parameter
+                intent.putExtra("dispatchFrom", "MainActivity_to_RegistrationActivity");
+                v.getContext().startActivity(intent);
             }
         });
 
     }
 
 
-    private void makePostRequest()  {
-//        https://hc.apache.org/httpcomponents-client-4.5.x/quickstart.html
-//        https://hayageek.com/android-http-post-get/
-//https://gist.github.com/mingliangguo/c86e05a0f8a9019b281a63d151965ac7
-
-//https://www.javasavvy.com/post-json-request-using-apache-httpclient/
-//https://www.javasavvy.com/java-http-post-request-example/
-// https://www.javasavvy.com/apache-httpclient-post-request-with-jackson-object-mapper/
-
-        CloseableHttpClient httpClient = null;
-        String LOG_TAG = "HttpClientActivity";
-        HttpClientConnectionManager connectionManager;
-
-
-        connectionManager = AndroidHttpClientConnectionManagerBuilder.create()
-
-                .setConnectionTimeToLive(1, TimeUnit.MINUTES)
-                .setDefaultSocketConfig(SocketConfig.custom()
-                        .setSoTimeout(5000)
-                        .build())
-                .build();
-
-
-        httpClient = HttpClients.custom()
-                .setConnectionManager(connectionManager)
-                .setDefaultRequestConfig(RequestConfig.custom()
-                        .setConnectTimeout(5000)
-                        .setSocketTimeout(5000)
-                        .setCookieSpec(CookieSpecs.STANDARD_STRICT)
-                        .build())
-                .build();
-
-        // replace with your url
-        HttpPost httpPost = new HttpPost("http://192.168.4.100:8000/api/account/login");
-        //            httpPost.setHeader("Authorization", "Basic (with a username and password)");
-        httpPost.setHeader("Content-type", "application/json");
-
-        // preparing post data
-        Map<String, String> requestPayloadMap = new HashMap<>();
-        requestPayloadMap.put("username", "user1");
-        requestPayloadMap.put("password", "11111111");
-        JSONObject requestPayload = new JSONObject(requestPayloadMap);
-        String requestBody = requestPayload.toString();
-
-        System.out.println(requestBody);
-
-        // Set the request entity as a StringEntity with the serialized JSON payload
-        StringEntity stringEntity = new StringEntity(requestBody, ContentType.APPLICATION_JSON);
-        stringEntity.setContentType(String.valueOf(ContentType.APPLICATION_JSON));
-        httpPost.setEntity(stringEntity);
-
-
-        //making POST request.
-        try {
-             HttpResponse response = httpClient.execute(httpPost);
-            // write response to log/ response header
-            Log.d("HttpPostResponseLogin:", response.toString());
-
-            // Get the response status code
-            int statusCode = response.getStatusLine().getStatusCode();
-            // Get the response body
-            HttpEntity responseEntity = response.getEntity();
-            String responseBody = EntityUtils.toString(responseEntity);
-            // Close the response entity
-            EntityUtils.consume(responseEntity);
-            Header encodingHeader = responseEntity.getContentEncoding();
-
-//            / Handle the response
-            System.out.println("Response Code: " + statusCode);
-            System.out.println("Response Body: " + responseBody);
-            Log.d("PostJsonResponse", responseBody);
-            JSONObject ro = new JSONObject(responseBody);
-            System.out.println("ResponseObject: username: " + ro.getString("username"));
-
-        } catch (ClientProtocolException e) {
-            // Log exception
-            e.printStackTrace();
-        } catch (IOException e) {
-            // Log exception
-            e.printStackTrace();
-        }catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            // Close the HttpClient instance
-//            httpClient.getConnectionManager().shutdown();
-            connectionManager.shutdown();
-        }
-
-    }
 
 
 }

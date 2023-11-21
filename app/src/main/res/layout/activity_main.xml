@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
     tools:context=".MainActivity">
 
 
@@ -35,22 +37,20 @@
         android:id="@+id/btnNavToLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="72dp"
-        android:layout_marginTop="52dp"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="60dp"
         android:text="Go to Login Screen"
         android:textAlignment="center"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewTempResult"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/textViewTempResult" />
 
     <Button
-        android:id="@+id/btnNavToPostReq"
-        android:layout_width="wrap_content"
+        android:id="@+id/btnNavToRegistration"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="72dp"
         android:layout_marginTop="52dp"
-        android:text="Post Request"
+        android:text="Go to Registration Screen"
         android:textAlignment="center"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
