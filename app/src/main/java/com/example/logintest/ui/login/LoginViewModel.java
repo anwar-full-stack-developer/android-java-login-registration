@@ -4,12 +4,11 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import android.content.Context;
 import android.util.Patterns;
 
 import com.example.logintest.data.AppMainSharedRepository;
-import com.example.logintest.data.LoginRepository;
-import com.example.logintest.data.LoginDataSourceResult;
+import com.example.logintest.data.login.LoginRepository;
+import com.example.logintest.data.login.LoginResponse;
 import com.example.logintest.data.model.LoggedInUser;
 
 import com.example.logintest.R;
@@ -35,10 +34,10 @@ public class LoginViewModel extends ViewModel {
     public void login(String username, String password) {
 
         // can be launched in a separate asynchronous job
-        LoginDataSourceResult<LoggedInUser> loginDataSourceResult = loginRepository.login(username, password);
+        LoginResponse<LoggedInUser> loginResponse = loginRepository.login(username, password);
 
-        if (loginDataSourceResult instanceof LoginDataSourceResult.Success) {
-            LoggedInUser data = ((LoginDataSourceResult.Success<LoggedInUser>) loginDataSourceResult).getData();
+        if (loginResponse instanceof LoginResponse.Success) {
+            LoggedInUser data = ((LoginResponse.Success<LoggedInUser>) loginResponse).getData();
             //TODO: required, but removed id necessary
             AppMainSharedRepository.getInstance().setLoggedinUser(data);
 

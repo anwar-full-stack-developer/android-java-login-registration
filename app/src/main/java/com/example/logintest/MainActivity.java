@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //required for apache http plugin
         if (android.os.Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy gfgPolicy =
                     new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -68,19 +69,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         final TextView textViewTempResult = binding.textViewTempResult;
-
-// init from view model
-//                mainViewModel.getText().observe(getActivity(), new Observer<String>() {
-        //init from activity
-//        apmsr.getCurrentName().observe(this, new Observer<String>() {
-//            @Override
-//            public void onChanged(String s) {
-//                // When text change
-//                // set result text on text view
-//                // Update the UI, in this case, a TextView.
-//                textViewTempResult.setText("Live data update " + s);
-//            }
-//        });
 
 
         // watch LoggedIn user
