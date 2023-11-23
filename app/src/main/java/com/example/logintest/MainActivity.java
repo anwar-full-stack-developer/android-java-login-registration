@@ -63,11 +63,12 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        AppMainSharedRepository apmsr = AppMainSharedRepository.getInstance();
+        apmsr.setContext(getApplicationContext());
 
 
         final TextView textViewTempResult = binding.textViewTempResult;
 
-        AppMainSharedRepository apmsr = AppMainSharedRepository.getInstance();
 // init from view model
 //                mainViewModel.getText().observe(getActivity(), new Observer<String>() {
         //init from activity
@@ -127,6 +128,9 @@ public class MainActivity extends AppCompatActivity {
                 v.getContext().startActivity(intent);
             }
         });
+
+
+        apmsr.LoadLoggedinUserFromLocalStorage();
 
     }
 

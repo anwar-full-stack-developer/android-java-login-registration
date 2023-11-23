@@ -5,7 +5,9 @@ import android.app.Activity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -27,12 +29,13 @@ import android.widget.Toast;
 
 import com.example.logintest.R;
 import com.example.logintest.data.AppMainSharedRepository;
+import com.example.logintest.data.model.LoggedInUser;
 import com.example.logintest.ui.login.LoginViewModel;
 import com.example.logintest.ui.login.LoginViewModelFactory;
 import com.example.logintest.databinding.ActivityLoginBinding;
 import com.example.logintest.ui.registration.RegistrationActivity;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity  {
 
     private LoginViewModel loginViewModel;
     private ActivityLoginBinding binding;
@@ -53,6 +56,8 @@ public class LoginActivity extends AppCompatActivity {
         final Button signupButton = binding.signup;
         final ProgressBar loadingProgressBar = binding.loading;
 
+        // reload login user from local storage
+//        LoadLoggedinUserFromLocalStorage();
 
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
             @Override
@@ -81,6 +86,8 @@ public class LoginActivity extends AppCompatActivity {
                     showLoginFailed(loginResult.getError());
                 }
                 if (loginResult.getSuccess() != null) {
+                    //TODO: save loggedin user to local storage, remove line of necessery
+//                    saveLoggedinUserToSharedPreferences(loginResult.getSuccess());
                     updateUiWithUser(loginResult.getSuccess());
                 }
                 setResult(Activity.RESULT_OK);
@@ -152,6 +159,44 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Save user info to local storage
+     *
+     * @param model LoggedInUserView
+     */
+    private void saveLoggedinUserToSharedPreferences(LoggedInUserView model) {
+        //save login info to local shared storage
+        LoggedInUser u = AppMainSharedRepository.getInstance().getLoggedinUser().getValue();
+
+        AppMainSharedRepository Amsr = AppMainSharedRepository.getInstance();
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences(Amsr.getPreferencesStorageName(), Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor edit = preferences.edit();
+        edit.putString("loggedin_user_token", u.getLoginToken());
+        edit.putString("loggedin_user_id", u.getUserId());
+        edit.putString("loggedin_user_displayName", u.getDisplayName());
+        edit.commit();
+
+        AppMainSharedRepository.getInstance().setAllPreferences(preferences.getAll());
+
+    }
+
+    private void LoadLoggedinUserFromLocalStorage(){
+        //Reload loggedin user from storage
+        AppMainSharedRepository Amsr = AppMainSharedRepository.getInstance();
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences(Amsr.getPreferencesStorageName(), Context.MODE_PRIVATE);
+
+        Amsr.setAllPreferences(preferences.getAll());
+
+        String token = preferences.getString("loggedin_user_token", null);
+        String uid = preferences.getString("loggedin_user_id", null);
+        String displayName =  preferences.getString("loggedin_user_displayName", null);
+
+        if (token != null && token.trim().isEmpty() == false )
+            Amsr.setLoggedinUser( new LoggedInUser(uid, displayName, token) );
+
+    }
+
     private void updateUiWithUser(LoggedInUserView model) {
         String welcome = "Login Success, " + getString(R.string.welcome) + model.getDisplayName();
         // TODO : initiate successful logged in experience
@@ -159,6 +204,7 @@ public class LoginActivity extends AppCompatActivity {
         final TextView textViewLoginActionCbMsg = binding.textViewLoginActionCbMsg;
         textViewLoginActionCbMsg.setText(welcome);
         textViewLoginActionCbMsg.setTextColor(Color.parseColor("green"));
+
 
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
     }
